@@ -60,6 +60,7 @@ class MustBeLargerThanClusterToleranceLineRule(AbstractTopologyRule):
       
       #logger("if", LOGGER_INFO)
 
+      lista = []
       for i in range(0, line.getNumVertices()):
         vertex = line.getVertex(i)
         point = createPoint(D2, vertex.getX(), vertex.getY())
@@ -81,25 +82,29 @@ class MustBeLargerThanClusterToleranceLineRule(AbstractTopologyRule):
               print "The rule is not violated"
             else:
               print "The rule is violated"
-              error = line
-              report.addLine(self,
-                theDataSet,
-                None,
-                line,
-                error,
-                None,
-                None,
-                0,
-                0,
-                False,
-                "The distance between vertices is not larger than the tolerance",
-                "Prueba"
-              )
-              break
-        break
-        #break
-            
-        #logger("end", LOGGER_INFO)
+              if otherPoint not in lista:
+                lista.append(otherPoint)
+                print "Punto incluido en la lista"
+              else:
+                print "No incluido en la lista"
+
+      error = createMultiPoint(D2, lista)
+      report.addLine(self,
+        theDataSet,
+        None,
+        line,
+        error,
+        None,
+        None,
+        0,
+        0,
+        False,
+        "The distance between vertices is not larger than the tolerance",
+        "Prueba"
+      )
+      
+      #logger("end", LOGGER_INFO)
+      
     except: # Exception as ex:
       #logger("2 Can't check feature."+str(ex), LOGGER_WARN)
       ex = sys.exc_info()[1]
