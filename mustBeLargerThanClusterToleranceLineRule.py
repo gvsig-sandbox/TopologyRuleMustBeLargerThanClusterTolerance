@@ -68,11 +68,13 @@ class MustBeLargerThanClusterToleranceLineRule(AbstractTopologyRule):
           otherVertex = line.getVertex(j)
           otherPoint = createPoint(D2, otherVertex.getX(), otherVertex.getY())
           if i == j:
+            print "i, j", i, j
             print "Same vertex"
             continue
           else:
+            print "i, j", i, j
             d = math.sqrt(pow(otherVertex.getX()-vertex.getX(), 2) + pow(otherVertex.getY()-vertex.getY(), 2))
-            print d
+            print "distance", d
             print type(vertexTolerance)
             #print tolerance
             if not vertexTolerance.intersects(otherPoint):
@@ -94,6 +96,8 @@ class MustBeLargerThanClusterToleranceLineRule(AbstractTopologyRule):
                 "Prueba"
               )
               break
+        break
+        #break
             
         #logger("end", LOGGER_INFO)
     except: # Exception as ex:
