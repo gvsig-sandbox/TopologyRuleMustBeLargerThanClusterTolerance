@@ -18,7 +18,7 @@ from org.gvsig.topology.lib.api import TopologyLocator
 
 from org.gvsig.expressionevaluator import ExpressionEvaluatorLocator
 
-#from DeletePointAction import DeletePointAction
+from DeleteAction import DeleteAction
 
 
 class MustBeLargerThanClusterToleranceLineRule(AbstractTopologyRule):
@@ -31,7 +31,7 @@ class MustBeLargerThanClusterToleranceLineRule(AbstractTopologyRule):
     #        String dataSet1
     
     AbstractTopologyRule.__init__(self, plan, factory, tolerance, dataSet1)
-    #self.addAction(DeletePointAction())
+    self.addAction(DeleteAction())
   
   def check(self, taskStatus, report, feature1):
     #SimpleTaskStatus taskStatus, 
@@ -39,32 +39,23 @@ class MustBeLargerThanClusterToleranceLineRule(AbstractTopologyRule):
     #Feature feature1
 
     try:
-      #logger("si", LOGGER_INFO)
-      tolerance = self.getTolerance()
-      #logger("1", LOGGER_INFO)
-      
 
       line = feature1.getDefaultGeometry()
-      #lineTolerance = line.buffer(tolerance)
+      tolerance = self.getTolerance()
+      theDataSet = self.getDataSet1()
+      print "id", feature1.Id
 
       if(line==None):
         return
-
-      
-      #if(lineTolerance==None):
-      #  lineTolerance = line
-
-      #logger("1", LOGGER_INFO)
-      theDataSet = self.getDataSet1()
-      #logger("2", LOGGER_INFO)
-      
-      #logger("if", LOGGER_INFO)
 
       lista = []
       for i in range(0, line.getNumVertices()):
         vertex = line.getVertex(i)
         point = createPoint(D2, vertex.getX(), vertex.getY())
-        vertexTolerance = point.buffer(tolerance)
+        if tolerance != 0:
+          vertexTolerance = point.buffer(tolerance)
+        else:
+          vertexTolerance = point
         for j in range(0, line.getNumVertices()):
           otherVertex = line.getVertex(j)
           otherPoint = createPoint(D2, otherVertex.getX(), otherVertex.getY())
@@ -74,46 +65,42 @@ class MustBeLargerThanClusterToleranceLineRule(AbstractTopologyRule):
             continue
           else:
             print "i, j", i, j
-            d = math.sqrt(pow(otherVertex.getX()-vertex.getX(), 2) + pow(otherVertex.getY()-vertex.getY(), 2))
-            print "distance", d
-            print type(vertexTolerance)
-            #print tolerance
-            if not vertexTolerance.intersects(otherPoint):
+            if not vertexTolerance.intersects(otherPoint) or vertexTolerance.disjoint(otherPoint):
               print "The rule is not violated"
             else:
               print "The rule is violated"
               if otherPoint not in lista:
                 lista.append(otherPoint)
-                print "Punto incluido en la lista"
+                print "Point included in the list"
               else:
-                print "No incluido en la lista"
+                print "Point not included in the list"
 
-      error = createMultiPoint(D2, lista)
-      report.addLine(self,
-        theDataSet,
-        None,
-        line,
-        error,
-        None,
-        None,
-        0,
-        0,
-        False,
-        "The distance between vertices is not larger than the tolerance",
-        "Prueba"
-      )
-      
-      #logger("end", LOGGER_INFO)
-      
-    except: # Exception as ex:
-      #logger("2 Can't check feature."+str(ex), LOGGER_WARN)
+      if lista:
+        error = createMultiPoint(D2, lista)
+        multipoint = error.convertToWKT()
+        report.addLine(self,
+          theDataSet,
+          None,
+          line,
+          error,
+          None,
+          None,
+          0,
+          0,
+          False,
+          "The distance between vertices is not larger than the tolerance",
+          multipoint
+        )
+      else:
+        print "No mistakes"
+
+    except:
       ex = sys.exc_info()[1]
       logger("Can't execute rule. Class Name:" + ex.__class__.__name__ + " Except:" + str(ex))
     finally:
       pass
 def main(*args):
-  # testing class m = MustBeDisjointPointRule(None, None, 3, None)
-  print "* Executing MustBeDisjointPoint RULE main."
+  print "* Executing MustBeLargerThanClusterTolerance RULE main."
   tm = TopologyLocator.getTopologyManager()
   
   from mustBeLargerThanClusterToleranceLineRuleFactory import MustBeLargerThanClusterToleranceLineRuleFactory
