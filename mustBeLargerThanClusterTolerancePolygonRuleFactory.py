@@ -17,7 +17,7 @@ from gvsig import logger
 from gvsig import LOGGER_WARN,LOGGER_INFO,LOGGER_ERROR
 
 from org.gvsig.topology.lib.api import TopologyLocator
-from mustBeLargerThanClusterToleranceLineRule import MustBeLargerThanClusterToleranceLineRule
+from mustBeLargerThanClusterToleranceRule import MustBeLargerThanClusterToleranceRule
 from mustBeLargerThanClusterToleranceLineRuleFactory import MustBeLargerThanClusterToleranceLineRuleFactory
 
 

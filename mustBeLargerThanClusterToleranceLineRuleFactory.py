@@ -17,7 +17,7 @@ from gvsig import logger
 from gvsig import LOGGER_WARN,LOGGER_INFO,LOGGER_ERROR
 
 from org.gvsig.topology.lib.api import TopologyLocator
-from mustBeLargerThanClusterToleranceLineRule import MustBeLargerThanClusterToleranceLineRule
+from mustBeLargerThanClusterToleranceRule import MustBeLargerThanClusterToleranceRule
 
 
 class MustBeLargerThanClusterToleranceLineRuleFactory(AbstractTopologyRuleFactory):
@@ -33,7 +33,7 @@ class MustBeLargerThanClusterToleranceLineRuleFactory(AbstractTopologyRuleFactor
       )
   def createRule(self, plan, dataSet1, dataSet2, tolerance):
     #TopologyPlan plan, String dataSet1, String dataSet2, double tolerance
-    rule = MustBeLargerThanClusterToleranceLineRule(plan, self, tolerance, dataSet1)
+    rule = MustBeLargerThanClusterToleranceRule(plan, self, tolerance, dataSet1)
     return rule
 
 def selfRegister():
