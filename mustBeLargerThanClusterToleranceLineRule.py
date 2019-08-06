@@ -83,7 +83,7 @@ class MustBeLargerThanClusterToleranceLineRule(AbstractTopologyRule):
           None,
           line,
           error,
-          None,
+          feature1.getReference(),
           None,
           0,
           0,
