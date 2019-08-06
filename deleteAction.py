@@ -35,22 +35,17 @@ class DeleteAction(AbstractTopologyRuleAction):
       reference = line.getFeature1()
       feature = reference.getFeature()
       geometry = feature.getDefaultGeometry()
+      multiPoint = geom.createGeometryFromWKT(line.getData())
       cloneGeometry = geometry.cloneGeometry()
 
-      multiPoint = geom.createGeometryFromWKT(line.getData())
-
-      print cloneGeometry.convertToWKT()
       for i in range(0, multiPoint.getPrimitivesNumber()):
         point = multiPoint.getPrimitiveAt(i)
         for j in range(0, geometry.getNumVertices()):
           vertex = geometry.getVertex(j)
           if point == vertex:
             cloneGeometry.removeVertex(j)
-            print cloneGeometry.convertToWKT()
           else:
             pass
-
-      print cloneGeometry.convertToWKT()
 
       feature = feature.getEditable()
       feature.set("GEOMETRY", cloneGeometry)
