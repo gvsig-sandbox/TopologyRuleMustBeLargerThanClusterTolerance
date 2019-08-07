@@ -19,6 +19,7 @@ from org.gvsig.topology.lib.api import TopologyLocator
 from org.gvsig.expressionevaluator import ExpressionEvaluatorLocator
 
 from DeleteAction import DeleteAction
+from DeleteFeatureAction import DeleteFeatureAction
 
 
 class MustBeLargerThanClusterToleranceRule(AbstractTopologyRule):
@@ -32,6 +33,7 @@ class MustBeLargerThanClusterToleranceRule(AbstractTopologyRule):
     
     AbstractTopologyRule.__init__(self, plan, factory, tolerance, dataSet1)
     self.addAction(DeleteAction())
+    self.addAction(DeleteFeatureAction())
   
   def check(self, taskStatus, report, feature1):
     #SimpleTaskStatus taskStatus, 
