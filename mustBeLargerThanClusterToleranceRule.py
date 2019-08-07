@@ -18,7 +18,7 @@ from org.gvsig.topology.lib.api import TopologyLocator
 
 from org.gvsig.expressionevaluator import ExpressionEvaluatorLocator
 
-from DeleteAction import DeleteAction
+from DeletePointsAction import DeletePointsAction
 from DeleteFeatureAction import DeleteFeatureAction
 
 
@@ -32,7 +32,7 @@ class MustBeLargerThanClusterToleranceRule(AbstractTopologyRule):
     #        String dataSet1
     
     AbstractTopologyRule.__init__(self, plan, factory, tolerance, dataSet1)
-    self.addAction(DeleteAction())
+    self.addAction(DeletePointsAction())
     self.addAction(DeleteFeatureAction())
   
   def check(self, taskStatus, report, feature1):
@@ -74,6 +74,7 @@ class MustBeLargerThanClusterToleranceRule(AbstractTopologyRule):
               if otherPoint not in lista:
                 lista.append(otherPoint)
                 print "Point included in the list"
+                print lista
               else:
                 print "Point not included in the list"
 
