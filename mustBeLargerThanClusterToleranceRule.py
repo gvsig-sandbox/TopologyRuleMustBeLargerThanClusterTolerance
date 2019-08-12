@@ -81,6 +81,7 @@ class MustBeLargerThanClusterToleranceRule(AbstractTopologyRule):
       if lista:
         error = createMultiPoint(D2, lista)
         multipoint = error.convertToWKT()
+        tolerance = str(tolerance)
         report.addLine(self,
           theDataSet,
           None,
@@ -92,7 +93,7 @@ class MustBeLargerThanClusterToleranceRule(AbstractTopologyRule):
           0,
           False,
           "The distance between vertices is not larger than the tolerance",
-          multipoint
+          tolerance
         )
       else:
         print "No mistakes"
