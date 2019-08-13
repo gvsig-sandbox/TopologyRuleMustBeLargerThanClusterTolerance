@@ -2,6 +2,7 @@ import gvsig
 from gvsig import geom
 from gvsig.geom import *
 from gvsig import uselib
+from org.gvsig.fmap.geom import GeometryUtils
 
 uselib.use_plugin("org.gvsig.topology.app.mainplugin")
 
@@ -51,32 +52,47 @@ class MustBeLargerThanClusterToleranceRule(AbstractTopologyRule):
         return
 
       lista = []
-      for i in range(0, line.getNumVertices()):
-        vertex = line.getVertex(i)
-        point = createPoint(D2, vertex.getX(), vertex.getY())
-        if tolerance != 0:
-          vertexTolerance = point.buffer(tolerance)
-        else:
-          vertexTolerance = point
-        for j in range(0, line.getNumVertices()):
-          otherVertex = line.getVertex(j)
-          otherPoint = createPoint(D2, otherVertex.getX(), otherVertex.getY())
-          if i == j:
-            print "i, j", i, j
-            print "Same vertex"
-            continue
+      def multi(geometry):
+        for i in range(0, geometry.getNumVertices()):
+          vertex = geometry.getVertex(i)
+          point = createPoint(D2, vertex.getX(), vertex.getY())
+          if tolerance != 0:
+            vertexTolerance = point.buffer(tolerance)
           else:
-            print "i, j", i, j
-            if not vertexTolerance.intersects(otherPoint) or vertexTolerance.disjoint(otherPoint):
-              print "The rule is not violated"
+            vertexTolerance = point
+          for j in range(0, geometry.getNumVertices()):
+            otherVertex = geometry.getVertex(j)
+            otherPoint = createPoint(D2, otherVertex.getX(), otherVertex.getY())
+            if i == j:
+              print "i, j", i, j
+              print "Same vertex"
+              continue
             else:
-              print "The rule is violated"
-              if otherPoint not in lista:
-                lista.append(otherPoint)
-                print "Point included in the list"
-                print lista
+              print "i, j", i, j
+              if not vertexTolerance.intersects(otherPoint) or vertexTolerance.disjoint(otherPoint):
+                print "The rule is not violated"
               else:
-                print "Point not included in the list"
+                print "The rule is violated"
+                if otherPoint not in lista:
+                  lista.append(otherPoint)
+                  print "Point included in the list"
+                  print lista
+                else:
+                  print "Point not included in the list"
+
+        return lista
+
+      if GeometryUtils.isSubtype(geom.MULTICURVE, line.getGeometryType().getType()):
+        print "if multigeometry"
+        for x in range(0, line.getPrimitivesNumber()):
+          geox = line.getPrimitiveAt(x)
+          print type(geox)
+          print geox.getNumVertices()
+          lista = multi(geox)
+          print lista
+      else:
+        print type(line)
+        lista = multi(line)
 
       if lista:
         error = createMultiPoint(D2, lista)
