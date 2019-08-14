@@ -43,16 +43,16 @@ class MustBeLargerThanClusterToleranceRule(AbstractTopologyRule):
 
     try:
 
-      line = feature1.getDefaultGeometry()
+      geometry = feature1.getDefaultGeometry()
       tolerance = self.getTolerance()
       theDataSet = self.getDataSet1()
       print "id", feature1.Id
 
-      if(line==None):
+      if(geometry==None):
         return
 
       lista = []
-      def multi(geometry):
+      def errorDetection(geometry):
         for i in range(0, geometry.getNumVertices()):
           vertex = geometry.getVertex(i)
           point = createPoint(D2, vertex.getX(), vertex.getY())
@@ -82,17 +82,13 @@ class MustBeLargerThanClusterToleranceRule(AbstractTopologyRule):
 
         return lista
 
-      if GeometryUtils.isSubtype(geom.MULTICURVE, line.getGeometryType().getType()):
-        print "if multigeometry"
-        for x in range(0, line.getPrimitivesNumber()):
-          geox = line.getPrimitiveAt(x)
-          print type(geox)
-          print geox.getNumVertices()
-          lista = multi(geox)
-          print lista
+      if (GeometryUtils.isSubtype(geom.MULTICURVE, geometry.getGeometryType().getType()) or 
+         GeometryUtils.isSubtype(geom.MULTISURFACE, geometry.getGeometryType().getType())):
+        for x in range(0, geometry.getPrimitivesNumber()):
+          geox = geometry.getPrimitiveAt(x)
+          lista = errorDetection(geox)
       else:
-        print type(line)
-        lista = multi(line)
+        lista = errorDetection(geometry)
 
       if lista:
         error = createMultiPoint(D2, lista)
@@ -101,7 +97,7 @@ class MustBeLargerThanClusterToleranceRule(AbstractTopologyRule):
         report.addLine(self,
           theDataSet,
           None,
-          line,
+          geometry,
           error,
           feature1.getReference(),
           None,
