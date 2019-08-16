@@ -37,24 +37,24 @@ class DeletePointsAction(AbstractTopologyRuleAction):
       dataSet = rule.getDataSet1()
       reference = line.getFeature1()
       feature = reference.getFeature()
-      lineToFix = feature.getDefaultGeometry()
+      geometryToFix = feature.getDefaultGeometry()
       tolerance = float(line.getData())
       #multiPoint = geom.createGeometryFromWKT(line.getData())
       #cloneGeometry = lineToFix.cloneGeometry()
       geoManager = GeometryLocator.getGeometryManager()
-      subtype = lineToFix.getGeometryType().getSubType()
+      subtype = geometryToFix.getGeometryType().getSubType()
       fixedLine = geoManager.createLine(subtype)
 
-      def geometryToModify(lineToFix):
-        for i in range(0, lineToFix.getNumVertices()):
-          vertex1 = lineToFix.getVertex(i)
+      def geometryToModify(geometryToFix):
+        for i in range(0, geometryToFix.getNumVertices()):
+          vertex1 = geometryToFix.getVertex(i)
           point = createPoint(D2, vertex1.getX(), vertex1.getY())
           if tolerance != 0:
             vertex1Tolerance = point.buffer(tolerance)
           else:
             vertex1Tolerance = point
-          for j in range(0, lineToFix.getNumVertices()):
-            vertex2 = lineToFix.getVertex(j)
+          for j in range(0, geometryToFix.getNumVertices()):
+            vertex2 = geometryToFix.getVertex(j)
             otherPoint = createPoint(D2, vertex2.getX(), vertex2.getY())
             if i==j:
               print "i, j", i, j
@@ -64,7 +64,7 @@ class DeletePointsAction(AbstractTopologyRuleAction):
               if not vertex1Tolerance.intersects(otherPoint):
                 print "The distance is larger than the tolerance"
                 if fixedLine.getNumVertices()==0:
-                  fixedLine.addVertex(lineToFix.getVertex(i))
+                  fixedLine.addVertex(geometryToFix.getVertex(i))
                 else:
                   print "The fixedLine vertices number is different from 0"
                 content = False
@@ -77,27 +77,30 @@ class DeletePointsAction(AbstractTopologyRuleAction):
                     print "Content is False"
                 if content == False:
                   print "if content == False"
-                  if j != lineToFix.getNumVertices()-1 and j>i:
-                    fixedLine.addVertex(lineToFix.getVertex(j))
+                  if j>i:
+                    fixedLine.addVertex(geometryToFix.getVertex(j))
                     break
                   else:
                     print "vertex not added"
                 else:
                   if j<i:
                     print "The vertex is already contained in the fixedLine"
+                  elif j==geometryToFix.getNumVertices()-1:
+                    fixedLine.addVertex(geometryToFix.getVertex(j))
                   else:
-                   break
+                    break
               else:
                 print "The distance is less than the tolerance"
 
         return fixedLine
 
-      if GeometryUtils.isSubtype(geom.MULTICURVE, lineToFix.getGeometryType().getType()):
-        for x in range(0, lineToFix.getPrimitivesNumber()):
-          geox = lineToFix.getPrimitiveAt(x)
+      if (GeometryUtils.isSubtype(geom.MULTICURVE, geometryToFix.getGeometryType().getType()) or 
+         GeometryUtils.isSubtype(geom.MULTISURFACE, geometryToFix.getGeometryType().getType())):
+        for x in range(0, geometryToFix.getPrimitivesNumber()):
+          geox = geometryToFix.getPrimitiveAt(x)
           fixedLine = geometryToModify(geox)
       else:
-        fixedLine = geometryToModify(lineToFix)
+        fixedLine = geometryToModify(geometryToFix)
 
       feature = feature.getEditable()
       feature.set("GEOMETRY", fixedLine)
