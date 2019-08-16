@@ -72,13 +72,16 @@ class MustBeLargerThanClusterToleranceRule(AbstractTopologyRule):
               if not vertexTolerance.intersects(otherPoint) or vertexTolerance.disjoint(otherPoint):
                 print "The rule is not violated"
               else:
-                print "The rule is violated"
-                if otherPoint not in lista:
-                  lista.append(otherPoint)
-                  print "Point included in the list"
-                  print lista
+                if vertex == otherVertex:
+                  print "Geometry's start and end vertices. The rule is not violated"
                 else:
-                  print "Point not included in the list"
+                  print "The rule is violated"
+                  if otherPoint not in lista:
+                    lista.append(otherPoint)
+                    print "Point included in the list"
+                    print lista
+                  else:
+                    print "Point not included in the list"
 
         return lista
 
