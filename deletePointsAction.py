@@ -63,7 +63,6 @@ class DeletePointsAction(AbstractTopologyRuleAction):
               if not vertex1Tolerance.intersects(otherPoint):
                 print "The distance is larger than the tolerance"
                 if geoxAux.getNumVertices()==0:
-                  print "addVertexIni"
                   geoxAux.addVertex(geometryToFix.getVertex(i))
                 else:
                   print "The fixedGeometry vertices number is different from 0"
@@ -76,7 +75,6 @@ class DeletePointsAction(AbstractTopologyRuleAction):
                   else:
                     print "Content is False"
                 if content == False:
-                  print "if content == False"
                   if j>i:
                     geoxAux.addVertex(geometryToFix.getVertex(j))
                     break
