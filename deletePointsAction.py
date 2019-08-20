@@ -26,7 +26,7 @@ class DeletePointsAction(AbstractTopologyRuleAction):
       "MustBeLargerThanClusterTolerance", #MustBeLargerThanClusterToleranceRuleFactory.NAME,
       "DeletePointsAction",
       "Delete Points Action",
-      ""#CAMBIAR
+      "This action modifies polygon and line features whose points collapse during the validation process bassed on the topology's tolerance. This action can be applied to one or more Must Be Larger Than Cluster Tolerance errors."
     )
   
   logger("1", LOGGER_INFO)
@@ -39,11 +39,10 @@ class DeletePointsAction(AbstractTopologyRuleAction):
       feature = reference.getFeature()
       geometryToFix = feature.getDefaultGeometry()
       tolerance = float(line.getData())
-      #multiPoint = geom.createGeometryFromWKT(line.getData())
-      #cloneGeometry = lineToFix.cloneGeometry()
       geoManager = GeometryLocator.getGeometryManager()
+      geomType = geometryToFix.getGeometryType().getType()
       subtype = geometryToFix.getGeometryType().getSubType()
-      fixedLine = geoManager.createLine(subtype)
+      fixedGeometry = geoManager.create(geomType, subtype)
 
       def geometryToModify(geometryToFix):
         for i in range(0, geometryToFix.getNumVertices()):
@@ -63,13 +62,14 @@ class DeletePointsAction(AbstractTopologyRuleAction):
               print "i, j", i, j
               if not vertex1Tolerance.intersects(otherPoint):
                 print "The distance is larger than the tolerance"
-                if fixedLine.getNumVertices()==0:
-                  fixedLine.addVertex(geometryToFix.getVertex(i))
+                if geoxAux.getNumVertices()==0:
+                  print "addVertexIni"
+                  geoxAux.addVertex(geometryToFix.getVertex(i))
                 else:
-                  print "The fixedLine vertices number is different from 0"
+                  print "The fixedGeometry vertices number is different from 0"
                 content = False
-                for k in range(0, fixedLine.getNumVertices()):
-                  vertex = fixedLine.getVertex(k)
+                for k in range(0, geoxAux.getNumVertices()):
+                  vertex = geoxAux.getVertex(k)
                   if vertex2 == vertex:
                     content = True
                     print "Content is True"
@@ -78,32 +78,38 @@ class DeletePointsAction(AbstractTopologyRuleAction):
                 if content == False:
                   print "if content == False"
                   if j>i:
-                    fixedLine.addVertex(geometryToFix.getVertex(j))
+                    geoxAux.addVertex(geometryToFix.getVertex(j))
                     break
                   else:
                     print "vertex not added"
                 else:
                   if j<i:
-                    print "The vertex is already contained in the fixedLine"
+                    print "The vertex is already contained in the fixedGeometry"
                   elif j==geometryToFix.getNumVertices()-1:
-                    fixedLine.addVertex(geometryToFix.getVertex(j))
+                    geoxAux.addVertex(geometryToFix.getVertex(j))
                   else:
                     break
               else:
                 print "The distance is less than the tolerance"
 
-        return fixedLine
+        return geoxAux
 
       if (GeometryUtils.isSubtype(geom.MULTICURVE, geometryToFix.getGeometryType().getType()) or 
          GeometryUtils.isSubtype(geom.MULTISURFACE, geometryToFix.getGeometryType().getType())):
         for x in range(0, geometryToFix.getPrimitivesNumber()):
           geox = geometryToFix.getPrimitiveAt(x)
-          fixedLine = geometryToModify(geox)
+          geoManager = GeometryLocator.getGeometryManager()
+          geomType = geox.getGeometryType().getType()
+          subtype = geox.getGeometryType().getSubType()
+          geoxAux = geoManager.create(geomType, subtype)
+          geoxAux = geometryToModify(geox)
+          fixedGeometry.addPrimitive(geoxAux)
       else:
-        fixedLine = geometryToModify(geometryToFix)
+        geoxAux = fixedGeometry
+        fixedGeometry = geometryToModify(geometryToFix)
 
       feature = feature.getEditable()
-      feature.set("GEOMETRY", fixedLine)
+      feature.set("GEOMETRY", fixedGeometry)
       dataSet.update(feature)
 
     except:
