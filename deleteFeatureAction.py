@@ -23,7 +23,7 @@ class DeleteFeatureAction(AbstractTopologyRuleAction):
       "MustBeLargerThanClusterTolerance", #MustBeLargerThanClusterToleranceRuleFactory.NAME,
       "DeleteFeatureAction",
       "Delete Feature Action",
-      ""#CAMBIAR
+      "This action will remove polygon and line features whose points collapse during the validate process bassed on the topology's tolerance. This action can be applied to one or more Must Be Larger Than Cluster Tolerance errors."
     )
   
   logger("1", LOGGER_INFO)
