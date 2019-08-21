@@ -29,7 +29,7 @@ class MustBeLargerThanClusterTolerancePolygonRuleFactory(MustBeLargerThanCluster
       self,
       "MustBeLargerThanClusterTolerancePolygon",
       "Must Be Larger Than Cluster Tolerance", 
-      "Requires that ...", 
+      "Requires that a feature does not collapse during a validate process and applies to all line and polygon features. In other words, the vertices of each feature of these types of geometries must be spaced a distance greater than the tolerance established by the user in the topological plan rule. Vertices that fall within the tolerance are defined as coincident and are snnaped together. Thiss rule is mandatory for all topology.", 
       ListBuilder().add(Geometry.TYPES.POLYGON).add(Geometry.TYPES.MULTIPOLYGON).asList()
       )
 

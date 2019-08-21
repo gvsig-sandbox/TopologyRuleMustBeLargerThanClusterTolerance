@@ -1,0 +1,43 @@
+{
+    "id": "MustBeLargerThanClusterTolerance",
+    "name": "Must Be Larger Than Cluster Tolerance",
+    "description": [ 
+        "<img src=\"@@@_d/must_be_larger_than_cluster_tolerance.png\">\n",
+        "Requires that a feature does not collapse during a validate process and", 
+        "applies to all line and polygon features.", 
+        " In other words, the vertices of each feature of these types of geometries", 
+        "must be spaced a distance larger than the tolerance established by the user", 
+        "in the topological plan rule. Vertices that fall within the tolerance", 
+        "are considered errors, and therefore, defined as coincident.", 
+        "The rule is also able to detect these errors for multipart geometries.", 
+        "As an output, an error report will be obtained in the error plan topology inspector ",
+        "where each record will report the errors found in a line or polygon feature."
+        "This rule is mandatory for all topology."
+    ],
+    "actions" : {
+        "DeleteFeatureAction": {
+            "name" : "Delete feature",
+            "description": [ 
+                "This action removes polygon and line features that collapse",
+                "during the validate process bassed on the topology's tolerance.\n",
+                "This fix can be applied to one or more Must Be Larger than Cluster Tolerance errors."
+            ]
+        },
+        "DeletePointsAction": {
+            "name" : "Delete Points",
+            "description": [ 
+                "This action modifies polygon and line features whose points collapse",
+                "during the validation process based on the topology's tolerance.",
+                "For it, it goes through the features vertices with error and the",
+                "vertices that do not violate the rule are added to an the same type", 
+                "empty geometry as the feature in question.",
+                "When a vertex is found that violates the rule, it is not added to the",
+                "empty geometry and will not add any more until it finds another vertex",
+                "whose distance from the last valid vertex is above the tolerance set",
+                "by the user."
+                "This fix can be applied to one or more Must Be Larger Than Tolerance Cluster errors."
+            ]
+        }
+    }
+}
+
