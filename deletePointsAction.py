@@ -101,7 +101,10 @@ class DeletePointsAction(AbstractTopologyRuleAction):
           subtype = geox.getGeometryType().getSubType()
           geoxAux = geoManager.create(geomType, subtype)
           geoxAux = geometryToModify(geox)
-          fixedGeometry.addPrimitive(geoxAux)
+          if not geoxAux.isEmpty():
+            fixedGeometry.addPrimitive(geoxAux)
+          else:
+            print "The primitive is empty", geoxAux
       else:
         geoxAux = fixedGeometry
         fixedGeometry = geometryToModify(geometryToFix)
