@@ -2,7 +2,7 @@
     "id": "MustBeLargerThanClusterTolerance",
     "name": "Must Be Larger Than Cluster Tolerance",
     "description": [ 
-        "<img src=\"@@@_d/must_be_larger_than_cluster_tolerance.png\">\n",
+        "<img src=\"@@@_d/mustBeLargerThanClusterTolerance.png\">\n",
         "Requires that a feature does not collapse during a validate process and", 
         "applies to all line and polygon features.", 
         " In other words, the vertices of each feature of these types of geometries", 
